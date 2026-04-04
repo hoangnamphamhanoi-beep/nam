@@ -1,63 +1,82 @@
-def count_line(file):
+def count_line(file_path):
     count = 0
     try:
-        with open(file, 'r') as c:
-            for line in c:
-                if line.strip():
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.strip(): 
                     count += 1
-        print(f'File: {file} has {count} lines')
-    except:
-        print(f'File {file} not founded')
-count_line("asdasdas")
+        print(f'File: {file_path} has {count} lines')
+        return count
+    except FileNotFoundError:
+        print(f'Error: File "{file_path}" not found.')
+        return 0
 
-#2
-def key_word(file, keyword):
-    key = []
-    with open(file, 'r') as check:
-        for line, content in enumerate(check, start = 1):
-            if keyword.lower() in content.lower():
-                key.append(line)
-    return key
+def key_word(file_path, keyword):
+    line_numbers = []
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line_num, content in enumerate(f, start=1):
+                if keyword.lower() in content.lower():
+                    line_numbers.append(line_num)
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found.")
+    return line_numbers
 
-kq = key_word('time.txt', 'Teacher')
-print(f'Lines that include the keyword: {kq}')
+def calculate_average(file_path):
+    total_score = 0
+    student_count = 0
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and ',' in line:
+                    parts = line.split(',')
+                    try:
+                        score = float(parts[1])
+                        total_score += score
+                        student_count += 1
+                    except (ValueError, IndexError):
+                        continue
+        
+        if student_count > 0:
+            avg = total_score / student_count
+            print(f'Average score of {student_count} students: {avg:.2f}')
+        else:
+            print("No valid data found.")
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found.")
 
-#3
-total_score = 0
-
-with open('score.txt', 'r') as average:
-    for stt, line in enumerate(average, start = 1):
-        parts = line.split(',')
-        score = float(parts[1])
-        total_score += score
-avg = total_score / stt
-print(f'Diem trung binh cua {stt} hoc sinh la {avg}')
-
-
-#4
+# 4. Caesar Cipher
 def caesar(filepath, steps, direction):
-    if direction == 'left':
-        shift = -steps
-    if direction == 'right':
-        shift = steps
+    shift = steps if direction == 'right' else -steps
 
-
-    with open(filepath, 'r') as ascii:
-        content = ascii.read()
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
         result = ""
         for char in content:
-            if char.isupper():
-                old_num = ord(char)
-                new_num = (old_num + shift - 65) % 26 + 65
-                new_word = chr(new_num)
-                result += new_word
+            if char.isdigit():
+                result += char
+            elif char.isupper():
+                result += chr((ord(char) + shift - 65) % 26 + 65)
             elif char.islower():
-                old_num = ord(char)
-                new_num = (old_num + shift - 97) % 26 + 97
-                new_word = chr(new_num)
-                result += new_word
+                result += chr((ord(char) + shift - 97) % 26 + 97)
             else:
                 result += char
+
+        with open('ciphertext.txt', 'w', encoding='utf-8') as f_out:
+            f_out.write(result)
+        print("Ciphertext saved to ciphertext.txt")
+        
+    except FileNotFoundError:
+        print(f"Error: File {filepath} not found.")
+
+count_line("time.txt")
+kq = key_word('time.txt', 'Teacher')
+print(f'Lines that include the keyword: {kq}')
+calculate_average('score.txt')
+caesar('time.txt', 4, 'right')
     with open('ciphertext.txt', 'w') as insert:
         insert.write(result)
 caesar('time.txt', 4 , 'right')
