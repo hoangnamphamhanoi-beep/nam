@@ -1,0 +1,63 @@
+def count_line(file):
+    count = 0
+    try:
+        with open(file, 'r') as c:
+            for line in c:
+                if line.strip():
+                    count += 1
+        print(f'File: {file} has {count} lines')
+    except:
+        print(f'File {file} not founded')
+count_line("asdasdas")
+
+#2
+def key_word(file, keyword):
+    key = []
+    with open(file, 'r') as check:
+        for line, content in enumerate(check, start = 1):
+            if keyword.lower() in content.lower():
+                key.append(line)
+    return key
+
+kq = key_word('time.txt', 'Teacher')
+print(f'Lines that include the keyword: {kq}')
+
+#3
+total_score = 0
+
+with open('score.txt', 'r') as average:
+    for stt, line in enumerate(average, start = 1):
+        parts = line.split(',')
+        score = float(parts[1])
+        total_score += score
+avg = total_score / stt
+print(f'Diem trung binh cua {stt} hoc sinh la {avg}')
+
+
+#4
+def caesar(filepath, steps, direction):
+    if direction == 'left':
+        shift = -steps
+    if direction == 'right':
+        shift = steps
+
+
+    with open(filepath, 'r') as ascii:
+        content = ascii.read()
+        result = ""
+        for char in content:
+            if char.isupper():
+                old_num = ord(char)
+                new_num = (old_num + shift - 65) % 26 + 65
+                new_word = chr(new_num)
+                result += new_word
+            elif char.islower():
+                old_num = ord(char)
+                new_num = (old_num + shift - 97) % 26 + 97
+                new_word = chr(new_num)
+                result += new_word
+            else:
+                result += char
+    with open('ciphertext.txt', 'w') as insert:
+        insert.write(result)
+caesar('time.txt', 4 , 'right')
